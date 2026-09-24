@@ -1,8 +1,0 @@
-{
-  "name":"elliott-plus",
-  "version":"6.1.0",
-  "private":true,
-  "engines":{"node":">=20 <26"},
-  "scripts":{"start":"node server.js"},
-  "dependencies":{"stripe":"^18.5.0"}
-}
