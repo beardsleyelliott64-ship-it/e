@@ -1,0 +1,73 @@
+name: Install Elliott+ ZIP
+
+on:
+  push:
+    paths:
+      - "*.zip"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  install:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Find uploaded ZIP
+        id: zip
+        shell: bash
+        run: |
+          ZIP="$(find . -maxdepth 1 -type f -iname '*.zip' -printf '%T@ %p\n' | sort -nr | head -n1 | cut -d' ' -f2-)"
+          if [ -z "$ZIP" ]; then
+            echo "No ZIP file found in the repository root."
+            exit 1
+          fi
+          echo "Using: $ZIP"
+          echo "path=$ZIP" >> "$GITHUB_OUTPUT"
+
+      - name: Extract Elliott+ files
+        shell: bash
+        run: |
+          ZIP="${{ steps.zip.outputs.path }}"
+          rm -rf .elliott_extract
+          mkdir -p .elliott_extract
+          unzip -q -o "$ZIP" -d .elliott_extract
+
+          # If the ZIP has one top-level folder, install that folder's contents.
+          shopt -s dotglob nullglob
+          entries=(.elliott_extract/*)
+          if [ "${#entries[@]}" -eq 1 ] && [ -d "${entries[0]}" ]; then
+            SOURCE="${entries[0]}"
+          else
+            SOURCE=".elliott_extract"
+          fi
+
+          # Copy the ZIP contents into the repository root.
+          cp -a "$SOURCE"/. .
+
+          rm -rf .elliott_extract
+
+          # Do not let the installer workflow copy ZIP files into the app itself.
+          # The uploaded ZIP stays in the repository so the action can be rerun if needed.
+
+      - name: Commit installed files
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add -A
+
+          if git diff --cached --quiet; then
+            echo "No file changes to commit."
+            exit 0
+          fi
+
+          git commit -m "Install Elliott+ from uploaded ZIP"
+          git push
