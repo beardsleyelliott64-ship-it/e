@@ -1,0 +1,78 @@
+name: Install Elliott ZIP
+
+on:
+  push:
+    paths:
+      - "*.zip"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  install:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Find uploaded ZIP
+        id: zip
+        shell: bash
+        run: |
+          ZIP="$(find . -maxdepth 1 -type f -iname '*.zip' -printf '%T@ %p\n' | sort -nr | head -n1 | cut -d' ' -f2-)"
+          if [ -z "$ZIP" ]; then
+            echo "No ZIP file found in repository root."
+            exit 1
+          fi
+          echo "Using: $ZIP"
+          echo "path=$ZIP" >> "$GITHUB_OUTPUT"
+
+      - name: Install Elliott app
+        shell: bash
+        run: |
+          ZIP="${{ steps.zip.outputs.path }}"
+          rm -rf .elliott_extract
+          mkdir -p .elliott_extract
+          unzip -q -o "$ZIP" -d .elliott_extract
+
+          shopt -s dotglob nullglob
+          entries=(.elliott_extract/*)
+
+          if [ "${#entries[@]}" -eq 1 ] && [ -d "${entries[0]}" ]; then
+            SOURCE="${entries[0]}"
+          else
+            SOURCE=".elliott_extract"
+          fi
+
+          if [ -d "$SOURCE/Elliott" ]; then
+            SOURCE="$SOURCE/Elliott"
+          fi
+
+          # Remove the old incorrectly named app folder, if it exists.
+          rm -rf "Elliott+"
+          rm -rf "Elliott"
+          mkdir -p "Elliott"
+          cp -a "$SOURCE"/. "Elliott"/
+
+          # Never copy workflow files from the ZIP.
+          rm -rf .elliott_extract
+
+      - name: Commit installed app only
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add -A Elliott Elliott+
+
+          if git diff --cached --quiet; then
+            echo "No Elliott app changes."
+            exit 0
+          fi
+
+          git commit -m "Install Elliott from uploaded ZIP"
+          git push
