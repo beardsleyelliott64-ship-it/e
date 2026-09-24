@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#07070d">
+<title>Elliott+ — Entertainment, without the clutter</title>
+<style>
+:root{
+  --bg:#06070b;--panel:#0b0d14;--panel2:#10131d;--line:#202536;
+  --text:#f7f8ff;--muted:#8f98ad;--cyan:#61f3ff;--purple:#9b7cff;
+  --pink:#ff5db1;--green:#76f7b2;--shadow:0 25px 80px rgba(0,0,0,.42);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.55 Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;overflow-x:hidden}
+button,input{font:inherit}
+button{cursor:pointer}
+a{color:inherit}
+::selection{background:#8b5cf655;color:#fff}
+
+/* animated background */
+.bg,.bg:before,.bg:after{position:fixed;inset:0;pointer-events:none}
+.bg{z-index:-5;overflow:hidden;background:
+ radial-gradient(circle at 50% -20%,#8b5cf51a,transparent 35%),
+ linear-gradient(#ffffff04 1px,transparent 1px),
+ linear-gradient(90deg,#ffffff04 1px,transparent 1px);
+ background-size:auto,44px 44px,44px 44px}
+.bg:before{content:"";width:38vw;height:38vw;inset:auto auto 55% -10%;border-radius:50%;filter:blur(100px);background:#00e5ff28;animation:blobA 14s ease-in-out infinite alternate}
+.bg:after{content:"";width:42vw;height:42vw;inset:55% -12% auto auto;border-radius:50%;filter:blur(110px);background:#a855f72b;animation:blobB 17s ease-in-out infinite alternate}
+@keyframes blobA{to{transform:translate(22vw,18vh) scale(1.25)}}
+@keyframes blobB{to{transform:translate(-20vw,-15vh) scale(1.18)}}
+.noise{position:fixed;inset:0;z-index:-4;opacity:.035;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.8'/%3E%3C/svg%3E")}
+.spark{position:fixed;width:3px;height:3px;border-radius:50%;background:#fff;box-shadow:0 0 16px #61f3ff;opacity:.5;z-index:-2;animation:drift 12s linear infinite}
+.spark:nth-child(1){left:8%;top:78%;animation-duration:13s}.spark:nth-child(2){left:18%;top:30%;animation-duration:17s}.spark:nth-child(3){left:31%;top:82%;animation-duration:11s}.spark:nth-child(4){left:44%;top:15%;animation-duration:19s}.spark:nth-child(5){left:59%;top:69%;animation-duration:15s}.spark:nth-child(6){left:72%;top:31%;animation-duration:18s}.spark:nth-child(7){left:83%;top:76%;animation-duration:12s}.spark:nth-child(8){left:92%;top:20%;animation-duration:20s}
+@keyframes drift{0%{transform:translateY(80px);opacity:0}15%{opacity:.55}50%{transform:translateY(-130px) translateX(28px)}100%{transform:translateY(-330px) translateX(-25px);opacity:0}}
+
+header{
+ position:sticky;top:0;z-index:20;height:74px;display:flex;align-items:center;gap:24px;
+ padding:0 clamp(16px,5vw,72px);background:#07080de6;border-bottom:1px solid #ffffff0b;
+ backdrop-filter:blur(22px) saturate(140%);
+}
+.logo{font-weight:900;font-size:22px;letter-spacing:-1px;text-decoration:none;white-space:nowrap}
+.logo span{color:var(--cyan)}
+.nav{display:flex;align-items:center;gap:5px;flex:1}
+.nav button{
+ background:transparent;border:1px solid transparent;color:#9da5b8;padding:9px 12px;border-radius:11px;
+ transition:.25s;position:relative
+}
+.nav button:hover{color:#fff;background:#ffffff06}
+.nav button.active{color:#fff;background:#ffffff09;border-color:#ffffff0d}
+.nav button.active:after{content:"";position:absolute;left:14px;right:14px;bottom:3px;height:2px;border-radius:99px;background:linear-gradient(90deg,var(--cyan),var(--purple),var(--pink));box-shadow:0 0 15px #61f3ff66}
+.search{display:flex;align-items:center;gap:8px;width:190px;height:40px;padding:0 12px;background:#0c0f17;border:1px solid #242a3a;border-radius:12px}
+.search span{color:#697286}.search input{min-width:0;width:100%;background:transparent;border:0;outline:0;color:#fff}
+.account{position:relative}
+.accountBtn{display:flex;align-items:center;gap:9px;border:1px solid #2a3041;background:#0d1018;color:#fff;border-radius:13px;padding:5px 9px 5px 6px}
+.avatar{width:30px;height:30px;border-radius:10px;display:grid;place-items:center;overflow:hidden;background:linear-gradient(135deg,#61f3ff,#9b7cff,#ff5db1);font-weight:900}
+.avatar img{width:100%;height:100%;object-fit:cover}
+.accountMenu{
+ display:none;position:absolute;right:0;top:48px;width:280px;padding:12px;background:#0b0d14f5;
+ border:1px solid #2a3041;border-radius:18px;box-shadow:var(--shadow);backdrop-filter:blur(22px)
+}
+.accountMenu.open{display:block;animation:pop .18s ease-out}
+@keyframes pop{from{opacity:0;transform:translateY(-5px) scale(.98)}to{opacity:1;transform:none}}
+.accountHead{display:flex;gap:12px;padding:9px;border-radius:13px;background:#ffffff05}
+.accountHead .avatar{width:48px;height:48px;border-radius:14px}
+.accountName{font-weight:800}.accountSub{font-size:12px;color:var(--muted);word-break:break-all}
+.accountId{font-size:11px;color:#687186;margin-top:3px}
+.accountAction{width:100%;margin-top:9px;padding:10px;border:1px solid #2a3041;border-radius:11px;background:#111520;color:#fff}
+.signin{border:0;border-radius:12px;padding:10px 13px;background:#5865f2;color:#fff;font-weight:800;box-shadow:0 8px 30px #5865f233}
+.mobileMenu{display:none}
+
+main{max-width:1240px;margin:auto;padding:54px 24px 80px}
+.page{display:none;animation:pageIn .35s ease both}
+.page.active{display:block}
+@keyframes pageIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.hero{min-height:520px;display:grid;place-items:center;text-align:center;position:relative}
+.heroInner{max-width:900px}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;padding:7px 11px;border:1px solid #31324b;background:#121322cc;color:#b9b6ff;border-radius:999px;font-size:12px;font-weight:800;letter-spacing:.4px;box-shadow:0 0 35px #8b5cf514}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 12px var(--green)}
+h1{font-size:clamp(52px,9vw,104px);line-height:.9;letter-spacing:-7px;margin:24px 0}
+.gradient{background:linear-gradient(100deg,#fff 8%,var(--cyan) 36%,#b59cff 62%,var(--pink) 90%);-webkit-background-clip:text;background-clip:text;color:transparent;background-size:220% 100%;animation:gradient 7s ease infinite}
+@keyframes gradient{50%{background-position:100% 0}}
+.hero p{max-width:700px;margin:0 auto;color:var(--muted);font-size:18px}
+.heroActions{display:flex;justify-content:center;gap:10px;margin-top:28px;flex-wrap:wrap}
+.primary,.secondary{
+ border-radius:13px;padding:12px 16px;border:1px solid #ffffff12;font-weight:800;transition:.25s
+}
+.primary{color:#05060a;background:linear-gradient(100deg,var(--cyan),#b8a2ff,var(--pink));box-shadow:0 15px 50px #61f3ff18}
+.secondary{color:#fff;background:#111520}
+.primary:hover,.secondary:hover{transform:translateY(-2px);filter:brightness(1.08)}
+.sectionTop{display:flex;justify-content:space-between;align-items:end;gap:15px;margin:25px 0 18px}
+.sectionTop h2{font-size:32px;line-height:1;margin:0;letter-spacing:-1.4px}.sectionTop p{color:var(--muted);margin:0}
+.kicker{font-size:11px;text-transform:uppercase;letter-spacing:2px;color:var(--cyan);font-weight:900;margin-bottom:8px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.card{
+ position:relative;overflow:hidden;min-height:210px;padding:22px;border-radius:20px;
+ background:linear-gradient(145deg,#10131cdd,#0a0c12ee);border:1px solid #202638;
+ box-shadow:0 14px 45px #0000001c;transition:transform .3s,border-color .3s,box-shadow .3s
+}
+.card:before{content:"";position:absolute;inset:-80% -30%;background:conic-gradient(from 0deg,transparent 0 65%,#61f3ff10 70%,#a78bfa14 75%,transparent 80%);animation:spin 9s linear infinite;pointer-events:none}
+.card:after{content:"";position:absolute;inset:0;background:linear-gradient(120deg,transparent 25%,#ffffff08 50%,transparent 75%);transform:translateX(-120%);transition:transform .65s}
+.card:hover:after{transform:translateX(120%)}
+.card:hover{transform:translateY(-7px);border-color:#3c4964;box-shadow:0 24px 70px #00000055}
+@keyframes spin{to{transform:rotate(360deg)}}
+.card>*{position:relative;z-index:1}
+.icon{font-size:28px;margin-bottom:28px}.card h3{margin:0 0 8px;font-size:20px}.card p{color:var(--muted);margin:0 0 18px}
+.meta{font-size:12px;color:#687286}.cardLink{margin-top:18px;background:#141925;color:#fff;border:1px solid #2a3143;border-radius:10px;padding:9px 12px}
+.rank{font-size:12px;color:var(--cyan);font-weight:900;margin-bottom:8px}
+.statRow{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:22px 0}
+.stat{padding:18px;border:1px solid #202638;background:#0c0f17;border-radius:16px}.stat b{font-size:25px}.stat span{display:block;color:var(--muted);font-size:12px;margin-top:3px}
+.subnav{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0 22px}.subnav button{background:#0c0f17;color:#aab2c3;border:1px solid #252c3c;border-radius:999px;padding:9px 13px}.subnav button.active{color:#fff;border-color:#61f3ff55;background:#61f3ff0b}
+.notice{padding:16px 18px;border:1px solid #292f42;background:#0d111a;border-radius:16px;color:#9da6b9;margin:20px 0}
+.empty{display:none;padding:35px;text-align:center;border:1px dashed #2b3243;border-radius:18px;color:var(--muted);grid-column:1/-1}
+footer{padding:30px 24px 50px;text-align:center;color:#606a7d;border-top:1px solid #ffffff0a}
+
+@media(max-width:1050px){
+ .nav button:nth-child(n+4){display:none}.search{width:145px}
+ .grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:760px){
+ header{height:66px;padding:0 14px;gap:10px}.nav{display:none}.search{display:none}.logo{margin-right:auto}
+ .mobileMenu{display:block;background:#0d1018;color:#fff;border:1px solid #252c3c;border-radius:11px;padding:8px 10px}
+ main{padding:28px 15px 65px}.hero{min-height:600px}.hero h1{letter-spacing:-4px;font-size:54px}
+ .grid,.statRow{grid-template-columns:1fr}.sectionTop{align-items:start;flex-direction:column}
+ .accountMenu{right:-5px}
+}
+</style>
+</head>
+<body>
+<div class="bg"><div class="noise"></div><i class="spark"></i><i class="spark"></i><i class="spark"></i><i class="spark"></i><i class="spark"></i><i class="spark"></i><i class="spark"></i><i class="spark"></i></div>
+
+<header>
+  <a class="logo" href="#home">Elliott<span>+</span></a>
+  <nav class="nav" aria-label="Main navigation">
+    <button data-tab="home" class="active">Home</button>
+    <button data-tab="films">Films</button>
+    <button data-tab="charts">Charts</button>
+    <button data-tab="week">This Week</button>
+    <button data-tab="year">2026</button>
+  </nav>
+  <div class="search"><span>⌕</span><input id="search" placeholder="Search Elliott+"></div>
+  <button class="mobileMenu" id="mobileMenu">☰</button>
+  <div class="account">
+    <button class="accountBtn" id="accountBtn" aria-expanded="false">
+      <span class="avatar" id="avatar">E</span><span id="accountLabel">Sign in</span>
+    </button>
+    <div class="accountMenu" id="accountMenu"></div>
+  </div>
+</header>
+
+<main>
+  <section id="home" class="page active" data-page="home">
+    <div class="hero">
+      <div class="heroInner">
+        <div class="eyebrow"><span class="dot"></span> Elliott+ entertainment hub</div>
+        <h1>What are you<br><span class="gradient">watching next?</span></h1>
+        <p>Discover films, live chart snapshots, weekly movers and the biggest entertainment moments of 2026 — all in one clean, animated space.</p>
+        <div class="heroActions">
+          <button class="primary" data-tab="films">Explore films →</button>
+          <button class="secondary" data-tab="charts">Open charts</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="sectionTop"><div><div class="kicker">Elliott+ picks</div><h2>Start here</h2></div><p>Quick routes around the site</p></div>
+    <div class="grid searchable">
+      <article class="card"><div class="icon">🎬</div><h3>Top Films</h3><p>Browse the current film snapshot and see the titles sitting at the top.</p><button class="cardLink" data-tab="films">Open Films →</button></article>
+      <article class="card"><div class="icon">📊</div><h3>Charts</h3><p>Explore entertainment chart views without digging through separate pages.</p><button class="cardLink" data-tab="charts">Open Charts →</button></article>
+      <article class="card"><div class="icon">🔥</div><h3>This Week</h3><p>See what's moving this week and jump straight into the latest highlights.</p><button class="cardLink" data-tab="week">See This Week →</button></article>
+      <article class="card"><div class="icon">🏆</div><h3>2026</h3><p>A year hub for releases, highlights and notable entertainment moments.</p><button class="cardLink" data-tab="year">Open 2026 →</button></article>
+      <article class="card"><div class="icon">👤</div><h3>Discord profile</h3><p>Sign in with Discord to show your name, avatar and Discord user ID in your profile menu.</p><button class="cardLink" id="homeAccount">Open profile →</button></article>
+      <article class="card"><div class="icon">✨</div><h3>Search</h3><p>Use the search box to filter the cards on the page you are viewing.</p><button class="cardLink" id="focusSearch">Search now →</button></article>
+    </div>
+  </section>
+
+  <section id="films" class="page" data-page="films">
+    <div class="sectionTop"><div><div class="kicker">Cinema</div><h2>Top Films</h2></div><p>Current Elliott+ film snapshot</p></div>
+    <div class="notice">Film positions shown here are a site snapshot. Refresh the content whenever you want to publish a new chart update.</div>
+    <div class="grid searchable">
+      <article class="card"><div class="rank">#01</div><h3>Resident Evil</h3><p>Big-screen horror/action release in the current snapshot.</p><span class="meta">Cinema · 2026</span></article>
+      <article class="card"><div class="rank">#02</div><h3>Practical Magic 2</h3><p>Fantasy romance sequel featured in the current snapshot.</p><span class="meta">Cinema · 2026</span></article>
+      <article class="card"><div class="rank">#03</div><h3>Shaun the Sheep: The Beast of Mossy Bottom</h3><p>Animated comedy adventure in the current snapshot.</p><span class="meta">Animation · 2026</span></article>
+      <article class="card"><div class="rank">#04</div><h3>Pressure</h3><p>Drama release featured in the current snapshot.</p><span class="meta">Drama · 2026</span></article>
+      <article class="card"><div class="rank">#05</div><h3>Coming Soon</h3><p>Use this slot for your next manually updated film chart entry.</p><span class="meta">Placeholder slot</span></article>
+      <article class="card"><div class="rank">#06</div><h3>Your Pick</h3><p>Save space here for a community or editorial favourite.</p><span class="meta">Elliott+ pick</span></article>
+    </div>
+    <div class="empty">No film cards match your search.</div>
+  </section>
+
+  <section id="charts" class="page" data-page="charts">
+    <div class="sectionTop"><div><div class="kicker">Rankings</div><h2>Charts</h2></div><p>Switch between entertainment categories</p></div>
+    <div class="subnav">
+      <button class="active" data-chart="films">Films</button>
+      <button data-chart="tv">TV</button>
+      <button data-chart="music">Music</button>
+      <button data-chart="trending">Trending</button>
+    </div>
+    <div id="chart-films" class="chartView">
+      <div class="statRow"><div class="stat"><b>01</b><span>Resident Evil</span></div><div class="stat"><b>02</b><span>Practical Magic 2</span></div><div class="stat"><b>03</b><span>Shaun the Sheep</span></div><div class="stat"><b>04</b><span>Pressure</span></div></div>
+      <div class="grid searchable">
+        <article class="card"><div class="icon">🎬</div><h3>Film chart</h3><p>Use this view for your cinema rankings and weekly position changes.</p></article>
+        <article class="card"><div class="icon">↗</div><h3>Movers</h3><p>Highlight titles that climbed since your previous update.</p></article>
+        <article class="card"><div class="icon">🗓️</div><h3>Update cycle</h3><p>Refresh your chart data whenever you publish a new snapshot.</p></article>
+      </div>
+    </div>
+    <div id="chart-tv" class="chartView" style="display:none">
+      <div class="grid searchable"><article class="card"><div class="icon">📺</div><h3>TV spotlight</h3><p>Track the shows you want to feature on Elliott+.</p></article><article class="card"><div class="icon">🔥</div><h3>Trending shows</h3><p>Use this area for your current TV trend list.</p></article><article class="card"><div class="icon">⭐</div><h3>Top picks</h3><p>Curate standout shows with short descriptions.</p></article></div>
+    </div>
+    <div id="chart-music" class="chartView" style="display:none">
+      <div class="grid searchable"><article class="card"><div class="icon">🎵</div><h3>Music chart</h3><p>Add your current songs, albums or artists here.</p></article><article class="card"><div class="icon">🎧</div><h3>New releases</h3><p>Highlight the releases you want visitors to discover.</p></article><article class="card"><div class="icon">💿</div><h3>Albums</h3><p>Make a dedicated album ranking inside Elliott+.</p></article></div>
+    </div>
+    <div id="chart-trending" class="chartView" style="display:none">
+      <div class="grid searchable"><article class="card"><div class="icon">⚡</div><h3>Trending now</h3><p>A flexible area for whatever is getting attention on your site.</p></article><article class="card"><div class="icon">📈</div><h3>Rising</h3><p>Show titles that are gaining momentum in your own dataset.</p></article><article class="card"><div class="icon">✨</div><h3>Spotlight</h3><p>Give one title a larger featured moment.</p></article></div>
+    </div>
+  </section>
+
+  <section id="week" class="page" data-page="week">
+    <div class="sectionTop"><div><div class="kicker">Fresh</div><h2>This Week</h2></div><p>Weekly entertainment dashboard</p></div>
+    <div class="grid searchable">
+      <article class="card"><div class="icon">🎬</div><h3>Film spotlight</h3><p>Resident Evil, Practical Magic 2, Shaun the Sheep and Pressure are featured in the current film snapshot.</p><span class="meta">Weekly film view</span></article>
+      <article class="card"><div class="icon">📺</div><h3>TV watchlist</h3><p>Use this panel for the shows you want to put in front of visitors this week.</p><span class="meta">Weekly TV view</span></article>
+      <article class="card"><div class="icon">🎵</div><h3>Music watch</h3><p>Use this panel for new songs, albums and artists you want to highlight.</p><span class="meta">Weekly music view</span></article>
+      <article class="card"><div class="icon">⚡</div><h3>Trending</h3><p>Feature your biggest current story, release or entertainment moment.</p><span class="meta">Live editorial slot</span></article>
+    </div>
+    <div class="notice">Tip: update this page each week to keep the front page feeling fresh.</div>
+  </section>
+
+  <section id="year" class="page" data-page="year">
+    <div class="sectionTop"><div><div class="kicker">Year hub</div><h2>2026</h2></div><p>Your year-to-date entertainment space</p></div>
+    <div class="grid searchable">
+      <article class="card"><div class="icon">🎬</div><h3>2026 Films</h3><p>Keep the year's biggest film releases and highlights together.</p></article>
+      <article class="card"><div class="icon">📺</div><h3>2026 TV</h3><p>Build a year list of shows, seasons and moments you want to remember.</p></article>
+      <article class="card"><div class="icon">🎵</div><h3>2026 Music</h3><p>Collect your notable releases, songs and artists of the year.</p></article>
+      <article class="card"><div class="icon">🏆</div><h3>Year highlights</h3><p>Create an editorial timeline of the entertainment moments that mattered to your site.</p></article>
+      <article class="card"><div class="icon">📅</div><h3>Release calendar</h3><p>Use this space for upcoming releases and dates.</p></article>
+      <article class="card"><div class="icon">✨</div><h3>More coming</h3><p>Leave room for awards, trailers, reviews and other sections later.</p></article>
+    </div>
+  </section>
+</main>
+
+<footer>Elliott+ · Entertainment, without the clutter.</footer>
+
+<script>
+const pages=[...document.querySelectorAll(".page")];
+const navButtons=[...document.querySelectorAll("[data-tab]")];
+const accountBtn=document.getElementById("accountBtn");
+const accountMenu=document.getElementById("accountMenu");
+const avatar=document.getElementById("avatar");
+const accountLabel=document.getElementById("accountLabel");
+
+function showTab(name, updateHash=true){
+  if(!document.getElementById(name)) name="home";
+  pages.forEach(p=>p.classList.toggle("active",p.id===name));
+  document.querySelectorAll(".nav button[data-tab]").forEach(b=>b.classList.toggle("active",b.dataset.tab===name));
+  if(updateHash) history.replaceState(null,"","#"+name);
+  window.scrollTo({top:0,behavior:"smooth"});
+  applySearch(document.getElementById("search").value);
+}
+
+navButtons.forEach(b=>b.addEventListener("click",()=>showTab(b.dataset.tab)));
+document.querySelector(".logo").addEventListener("click",e=>{e.preventDefault();showTab("home")});
+
+window.addEventListener("hashchange",()=>showTab(location.hash.slice(1)||"home",false));
+showTab(location.hash.slice(1)||"home",false);
+
+document.getElementById("search").addEventListener("input",e=>applySearch(e.target.value));
+function applySearch(query){
+  const q=query.trim().toLowerCase();
+  const active=document.querySelector(".page.active");
+  if(!active)return;
+  const cards=[...active.querySelectorAll(".searchable .card")];
+  let matches=0;
+  cards.forEach(c=>{
+    const hit=!q||c.innerText.toLowerCase().includes(q);
+    c.style.display=hit?"":"none";
+    if(hit)matches++;
+  });
+  active.querySelectorAll(".empty").forEach(e=>e.style.display=(q&&cards.length&&!matches)?"block":"none");
+}
+
+document.getElementById("focusSearch").addEventListener("click",()=>{
+  document.getElementById("search").focus();
+});
+document.getElementById("homeAccount").addEventListener("click",()=>{
+  accountMenu.classList.add("open");
+  accountBtn.setAttribute("aria-expanded","true");
+});
+
+document.querySelectorAll("[data-chart]").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    document.querySelectorAll("[data-chart]").forEach(x=>x.classList.remove("active"));
+    btn.classList.add("active");
+    document.querySelectorAll(".chartView").forEach(v=>v.style.display="none");
+    document.getElementById("chart-"+btn.dataset.chart).style.display="block";
+  });
+});
+
+document.getElementById("mobileMenu").addEventListener("click",()=>{
+  const nav=document.querySelector(".nav");
+  const open=nav.style.display==="flex";
+  nav.style.display=open?"none":"flex";
+  nav.style.position="absolute";
+  nav.style.top="66px";nav.style.left="10px";nav.style.right="10px";
+  nav.style.padding="8px";nav.style.background="#0b0d14f7";nav.style.border="1px solid #242a3a";nav.style.borderRadius="15px";
+  nav.style.flexDirection="column";nav.style.alignItems="stretch";
+});
+
+accountBtn.addEventListener("click",async()=>{
+  const isOpen=accountMenu.classList.toggle("open");
+  accountBtn.setAttribute("aria-expanded",String(isOpen));
+  if(isOpen) await refreshAccount();
+});
+document.addEventListener("click",e=>{
+  if(!e.target.closest(".account")){
+    accountMenu.classList.remove("open");
+    accountBtn.setAttribute("aria-expanded","false");
+  }
+});
+
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function renderSignedOut(){
+  avatar.textContent="E"; avatar.innerHTML="E"; accountLabel.textContent="Sign in";
+  accountMenu.innerHTML='<div class="accountHead"><div class="avatar">E</div><div><div class="accountName">Not signed in</div><div class="accountSub">Connect your Discord profile</div></div></div><button class="signin" style="width:100%;margin-top:10px" id="discordLogin">Sign in with Discord</button>';
+  document.getElementById("discordLogin").onclick=()=>location.href="/auth/discord";
+}
+function renderSignedIn(user){
+  const img=user.avatarUrl?'<img src="'+escapeHtml(user.avatarUrl)+'" alt="">':escapeHtml((user.globalName||user.username||"E").slice(0,1).toUpperCase());
+  avatar.innerHTML=img; accountLabel.textContent=user.globalName||user.username||"Discord";
+  accountMenu.innerHTML='<div class="accountHead"><div class="avatar">'+img+'</div><div><div class="accountName">'+escapeHtml(user.globalName||user.username)+'</div><div class="accountSub">@'+escapeHtml(user.username)+'</div><div class="accountId">ID: '+escapeHtml(user.id)+'</div></div></div><button class="accountAction" id="copyId">Copy Discord ID</button><button class="accountAction" id="logout">Sign out</button>';
+  document.getElementById("copyId").onclick=async()=>{await navigator.clipboard?.writeText(user.id);document.getElementById("copyId").textContent="ID copied ✓"};
+  document.getElementById("logout").onclick=async()=>{await fetch("/auth/logout",{method:"POST"});location.reload()};
+}
+async function refreshAccount(){
+  try{
+    const r=await fetch("/api/me",{headers:{"Accept":"application/json"}});
+    const data=await r.json();
+    if(data.user) renderSignedIn(data.user); else renderSignedOut();
+  }catch{renderSignedOut()}
+}
+refreshAccount();
+</script>
+</body>
+</html>
