@@ -1,8 +1,0 @@
-services:
-  - type: web
-    name: elliott-plus
-    runtime: node
-    plan: free
-    buildCommand: npm install
-    startCommand: npm start
-    autoDeployTrigger: commit
