@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Elliott+</title>
+<meta name="description" content="Elliott+ — films, TV, charts, watchlist and Premium.">
+<style>
+*{box-sizing:border-box}html,body{margin:0;background:#070812;color:#f7f8ff;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+body{min-height:100vh;overflow-x:hidden}
+body:before{content:"";position:fixed;inset:0;z-index:-3;background:radial-gradient(circle at 15% 15%,#26316b55,transparent 35%),radial-gradient(circle at 85% 10%,#7d2cff33,transparent 30%),linear-gradient(120deg,#060711,#0a0b18 55%,#090612);animation:bg 14s ease-in-out infinite alternate}
+body:after{content:"";position:fixed;inset:-40%;z-index:-2;opacity:.22;background-image:linear-gradient(#ffffff09 1px,transparent 1px),linear-gradient(90deg,#ffffff09 1px,transparent 1px);background-size:42px 42px;transform:rotate(8deg);animation:grid 24s linear infinite}
+@keyframes bg{to{filter:hue-rotate(30deg) brightness(1.12);transform:scale(1.04)}}@keyframes grid{to{transform:rotate(8deg) translate3d(42px,42px,0)}}
+header{position:sticky;top:0;z-index:10;backdrop-filter:blur(18px);background:#070812c9;border-bottom:1px solid #ffffff12}
+.nav{max-width:1280px;margin:auto;display:flex;align-items:center;gap:14px;padding:13px 18px}
+.logo{font-weight:900;font-size:22px;letter-spacing:-.8px;margin-right:8px}.logo span{opacity:.55}
+nav{display:flex;gap:5px;flex:1;overflow:auto}nav button,.account,.search{border:1px solid #ffffff12;background:#ffffff08;color:#e9eaff;border-radius:11px;padding:9px 12px;white-space:nowrap;cursor:pointer}nav button:hover,.account:hover{background:#ffffff12}
+.search{width:230px;outline:0}.account{font-weight:700}
+main{max-width:1280px;margin:auto;padding:28px 18px 70px}.hero{padding:28px 0 22px;display:grid;grid-template-columns:1.4fr .8fr;gap:18px;align-items:end}
+h1{font-size:clamp(38px,7vw,76px);line-height:.9;margin:0 0 14px;letter-spacing:-4px}.hero p{color:#aeb1c5;max-width:680px;font-size:16px}.panel{border:1px solid #ffffff12;background:#ffffff07;border-radius:20px;padding:18px;box-shadow:0 20px 60px #0004}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.stat b{font-size:24px}.stat small{display:block;color:#969aae;margin-top:4px}
+.section{margin-top:22px}.sectionhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.sectionhead h2{margin:0;font-size:20px}
+.grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}.card{overflow:hidden;border:1px solid #ffffff12;background:#ffffff08;border-radius:14px;min-width:0}.poster{aspect-ratio:2/3;background:#121525;position:relative;overflow:hidden}.poster img{width:100%;height:100%;object-fit:cover;display:block}.poster .noimg{height:100%;display:grid;place-items:center;color:#7f849d;font-size:12px}.cardbody{padding:10px}.title{font-weight:750;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.meta{color:#9297ad;font-size:12px;margin-top:4px}.actions{display:flex;gap:6px;margin-top:8px}.actions button{flex:1;border:0;border-radius:9px;padding:7px;background:#ffffff10;color:#eee;cursor:pointer}.actions button.primary{background:#f4f5ff;color:#090a12}
+.badge{position:absolute;left:7px;top:7px;background:#05060bd9;border:1px solid #ffffff1c;border-radius:8px;padding:5px 7px;font-size:11px}
+.empty{padding:30px;text-align:center;color:#9297ad;border:1px dashed #ffffff16;border-radius:16px}
+footer{max-width:1280px;margin:auto;padding:20px 18px 35px;color:#74788e;font-size:12px}
+.modal{position:fixed;inset:0;background:#0009;backdrop-filter:blur(10px);display:none;align-items:center;justify-content:center;padding:20px;z-index:20}.modal.open{display:flex}.modalbox{width:min(460px,100%);background:#0d0f1c;border:1px solid #ffffff15;border-radius:18px;padding:20px}.modalbox h3{margin-top:0}.close{float:right;background:none;border:0;color:#aaa;font-size:20px;cursor:pointer}.plans{display:grid;grid-template-columns:1fr 1fr;gap:10px}.plan{padding:15px;border:1px solid #ffffff14;border-radius:14px;background:#ffffff07}.plan button{width:100%;margin-top:10px;border:0;border-radius:10px;padding:10px;cursor:pointer;font-weight:800}
+@media(max-width:950px){.grid{grid-template-columns:repeat(4,minmax(0,1fr))}.hero{grid-template-columns:1fr}.search{width:150px}}@media(max-width:680px){nav{order:3;flex-basis:100%}.nav{flex-wrap:wrap}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.search{flex:1}.plans{grid-template-columns:1fr}main{padding-top:15px}}
+</style>
+</head>
+<body>
+<header><div class="nav">
+<div class="logo">Elliott<span>+</span></div>
+<nav id="nav"></nav>
+<input id="search" class="search" placeholder="Search films & TV…">
+<button id="account" class="account">Sign in</button>
+</div></header>
+<main>
+<section class="hero">
+<div><h1>Entertainment,<br>without the clutter.</h1><p>Discover films and TV, track your watchlist, explore this week and 2026, and unlock Premium.</p></div>
+<div class="panel stats"><div class="stat"><b id="filmCount">—</b><small>Films</small></div><div class="stat"><b id="tvCount">—</b><small>TV</small></div><div class="stat"><b>2026</b><small>Current year</small></div></div>
+</section>
+<section class="section"><div class="sectionhead"><h2 id="sectionTitle">Home</h2></div><div id="content" class="grid"></div></section>
+</main>
+<footer>Elliott+ · No TMDB dependency. TV schedule/update data is supplied by TVmaze and should retain its required attribution/ShareAlike terms.</footer>
+<div id="modal" class="modal"><div class="modalbox"><button class="close" onclick="closeModal()">×</button><div id="modalContent"></div></div></div>
+<script>
+const tabs=["Home","Films","TV","This Week","2026","Charts","Watchlist","Premium"];
+let active="Home", data={films:[],tv:[],week:[],year:[],charts:[]};
+const nav=document.getElementById("nav"), content=document.getElementById("content"), title=document.getElementById("sectionTitle");
+function navRender(){nav.innerHTML=tabs.map(x=>`<button onclick="show('${x}')">${x}</button>`).join("")}
+async function load(){
+ try{const r=await fetch("/api/home");data=await r.json();document.getElementById("filmCount").textContent=data.films.length;document.getElementById("tvCount").textContent=data.tv.length;show("Home")}
+ catch(e){content.innerHTML='<div class="empty">Could not load content. Check the server logs.</div>'}
+}
+function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function card(x){const id=esc(x.id||x.title),img=x.image?`<img loading="lazy" src="${esc(x.image)}" alt="">`:`<div class="noimg">NO IMAGE</div>`;return `<article class="card"><div class="poster">${img}${x.year?`<span class="badge">${esc(x.year)}</span>`:""}</div><div class="cardbody"><div class="title" title="${esc(x.title)}">${esc(x.title)}</div><div class="meta">${esc(x.type||"")}${x.genre?" · "+esc(x.genre):""}</div><div class="actions"><button class="primary" onclick='watch(${JSON.stringify(x)})'>Trailer</button><button onclick='toggleWatch(${JSON.stringify(x)})'>＋</button></div></div></article>`}
+function render(items){content.innerHTML=items.length?items.map(card).join(""):'<div class="empty">Nothing here yet.</div>'}
+function show(tab){active=tab;title.textContent=tab;if(tab==="Home")render([...data.films.slice(0,10),...data.tv.slice(0,10)]);else if(tab==="Films")render(data.films);else if(tab==="TV")render(data.tv);else if(tab==="This Week")render(data.week);else if(tab==="2026")render(data.year);else if(tab==="Charts")render(data.charts);else if(tab==="Watchlist"){const ids=JSON.parse(localStorage.getItem("elliottWatchlist")||"[]");render([...data.films,...data.tv,...data.week,...data.year].filter(x=>ids.includes(String(x.id))))}else if(tab==="Premium")premium()}
+function toggleWatch(x){let a=JSON.parse(localStorage.getItem("elliottWatchlist")||"[]"),id=String(x.id);a=a.includes(id)?a.filter(v=>v!==id):[...a,id];localStorage.setItem("elliottWatchlist",JSON.stringify(a));if(active==="Watchlist")show("Watchlist")}
+function watch(x){if(x.trailer){window.open("https://www.youtube.com/watch?v="+encodeURIComponent(x.trailer),"_blank","noopener");}else alert("No trailer is available for this title yet.")}
+function premium(){content.innerHTML=`<div class="panel" style="grid-column:1/-1"><h2>Premium</h2><p>Support Elliott+ and unlock Premium status.</p><div class="plans"><div class="plan"><b>Monthly</b><div>£2.99 / month</div><button onclick="checkout('monthly')">Subscribe</button></div><div class="plan"><b>Yearly</b><div>£24.99 / year</div><button onclick="checkout('yearly')">Subscribe</button></div></div></div>`}
+async function checkout(plan){const r=await fetch("/api/checkout",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({plan})});const j=await r.json();if(j.url)location.href=j.url;else alert(j.error||"Checkout is not configured yet.")}
+function closeModal(){document.getElementById("modal").classList.remove("open")}
+document.getElementById("account").onclick=async()=>{const r=await fetch("/api/me");const j=await r.json();if(j.user){document.getElementById("modalContent").innerHTML=`<h3>${esc(j.user.username)}</h3><p>ID: ${esc(j.user.id)}</p><p><a href="/logout">Log out</a></p>`}else document.getElementById("modalContent").innerHTML='<h3>Sign in</h3><p>Use Discord to sign in.</p><button class="primary" style="padding:10px 14px;border:0;border-radius:10px" onclick="location.href=\\'/auth/discord\\'">Continue with Discord</button>';document.getElementById("modal").classList.add("open")}
+document.getElementById("search").addEventListener("input",e=>{const q=e.target.value.toLowerCase().trim();if(!q){show(active);return}render([...data.films,...data.tv,...data.week,...data.year,...data.charts].filter(x=>(x.title||"").toLowerCase().includes(q)))})
+navRender();load();
+</script>
+</body>
+</html>
